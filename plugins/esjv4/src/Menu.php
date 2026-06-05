@@ -18,7 +18,7 @@ final class Menu
             'page' => '/plugins/esjv4/front/dashboard.php',
             'icon' => 'ti ti-building-factory-2',
             'links' => [
-                'search' => '/plugins/esjv4/front/dashboard.php',
+                'search' => '/plugins/esjv4/front/projects.php',
                 'add' => '/plugins/esjv4/front/planning.php',
                 'templates' => '/plugins/esjv4/front/templates.php',
             ],

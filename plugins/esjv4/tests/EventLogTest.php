@@ -5,6 +5,7 @@ declare(strict_types=1);
 use GlpiPlugin\Esjv4\EventLog;
 
 esjv4_assert_true(class_exists(EventLog::class), 'EventLog class must exist');
+esjv4_assert_same('stage_closed', EventLog::STAGE_CLOSED, 'Stage closures must have their own event type');
 
 $seconds = EventLog::durationSeconds('2026-06-05 10:00:00', '2026-06-06 10:30:00');
 esjv4_assert_same(88200, $seconds, 'Duration must use raw 24/7 calendar seconds');

@@ -20,6 +20,7 @@ final class EventLog
     public const TASK_RESUMED = 'task_resumed';
     public const TASK_CLOSED = 'task_closed';
     public const PHASE_CLOSED = 'phase_closed';
+    public const STAGE_CLOSED = 'stage_closed';
     public const GATE_RELEASED = 'gate_released';
 
     public static function durationSeconds(string $start, string $end): int

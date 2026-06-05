@@ -21,6 +21,8 @@ $tests = [
     __DIR__ . '/PlanningInputTest.php',
     __DIR__ . '/PlanningServiceTest.php',
     __DIR__ . '/PlanningRepositoryTest.php',
+    __DIR__ . '/ProjectOverviewServiceTest.php',
+    __DIR__ . '/ProjectActionServiceTest.php',
     __DIR__ . '/GateReleaseServiceTest.php',
     __DIR__ . '/EventLogTest.php',
     __DIR__ . '/GateServiceTest.php',

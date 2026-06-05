@@ -16,3 +16,9 @@ esjv4_assert_same(Schema::TABLE_ACTIVITIES, $map['createActivity'], 'createActiv
 esjv4_assert_same(Schema::TABLE_EVENTS, $map['recordEvent'], 'recordEvent writes ESJ events');
 esjv4_assert_same(Schema::TABLE_STAGES, $map['constructionReleaseContext'], 'constructionReleaseContext reads ESJ stages');
 esjv4_assert_same(Schema::TABLE_PHASES, $map['activateConstructionPhases'], 'activateConstructionPhases updates ESJ phases');
+esjv4_assert_same(Schema::TABLE_PROJECTS, $map['projects'], 'projects reads ESJ projects');
+esjv4_assert_same(Schema::TABLE_PROJECTS, $map['project'], 'project reads ESJ project detail');
+esjv4_assert_same(Schema::TABLE_STAGES, $map['stages'], 'stages reads gate stages');
+esjv4_assert_same(Schema::TABLE_PHASES, $map['phases'], 'phases reads ESJ phases');
+esjv4_assert_same(Schema::TABLE_ACTIVITIES, $map['activities'], 'activities reads ESJ activities');
+esjv4_assert_same(Schema::TABLE_STAGES, $map['closeStage'], 'closeStage updates ESJ stages');

@@ -23,8 +23,9 @@ echo '<div class="card-header">Estado del plugin</div>';
 echo '<div class="card-body">';
 echo '<p><strong>Version:</strong> ' . htmlescape(Plugin::VERSION) . '</p>';
 echo '<p><strong>Esquema:</strong> ' . ($ready ? 'Listo' : 'Pendiente de instalacion') . '</p>';
-echo '<a class="btn btn-primary me-2" href="/plugins/esjv4/front/planning.php">Nuevo proyecto</a>';
-echo '<a class="btn btn-primary" href="/plugins/esjv4/front/templates.php">Ver plantillas</a>';
+echo '<a class="btn btn-primary me-2" href="/plugins/esjv4/front/projects.php">Ver proyectos</a>';
+echo '<a class="btn btn-outline-primary me-2" href="/plugins/esjv4/front/planning.php">Nuevo proyecto</a>';
+echo '<a class="btn btn-outline-secondary" href="/plugins/esjv4/front/templates.php">Ver plantillas</a>';
 echo '</div></div></div>';
 
 Html::footer();

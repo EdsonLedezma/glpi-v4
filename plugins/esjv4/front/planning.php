@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (($result['ok'] ?? false) === true) {
         Session::addMessageAfterRedirect('Proyecto ESJ V4 creado desde Planeacion.', true, INFO);
-        Html::redirect('/plugins/esjv4/front/dashboard.php');
+        Html::redirect('/plugins/esjv4/front/project.php?id=' . (int) $result['project_id']);
     }
 
     $errors = $result['errors'] ?? [];

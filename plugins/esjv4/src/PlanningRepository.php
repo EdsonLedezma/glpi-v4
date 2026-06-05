@@ -16,6 +16,12 @@ final class PlanningRepository
             'recordEvent' => Schema::TABLE_EVENTS,
             'constructionReleaseContext' => Schema::TABLE_STAGES,
             'activateConstructionPhases' => Schema::TABLE_PHASES,
+            'projects' => Schema::TABLE_PROJECTS,
+            'project' => Schema::TABLE_PROJECTS,
+            'stages' => Schema::TABLE_STAGES,
+            'phases' => Schema::TABLE_PHASES,
+            'activities' => Schema::TABLE_ACTIVITIES,
+            'closeStage' => Schema::TABLE_STAGES,
         ];
     }
 
@@ -188,6 +194,90 @@ final class PlanningRepository
         return (int) $DB->affectedRows();
     }
 
+    public function projects(): array
+    {
+        $DB = $this->db();
+        $rows = [];
+        $iterator = $DB->request([
+            'FROM' => Schema::TABLE_PROJECTS,
+            'ORDER' => ['id DESC'],
+            'LIMIT' => 200,
+        ]);
+
+        foreach ($iterator as $row) {
+            $row['project_code'] = (string) ($row['sap_project_code'] ?? '');
+            $row['project_name'] = $this->glpiProjectName((int) ($row['projects_id'] ?? 0), $row['project_code']);
+            $rows[] = $row;
+        }
+
+        return $rows;
+    }
+
+    public function project(int $project_id): array
+    {
+        $DB = $this->db();
+        $iterator = $DB->request([
+            'FROM' => Schema::TABLE_PROJECTS,
+            'WHERE' => ['id' => $project_id],
+            'LIMIT' => 1,
+        ]);
+
+        foreach ($iterator as $row) {
+            $row['project_code'] = (string) ($row['sap_project_code'] ?? '');
+            $row['project_name'] = $this->glpiProjectName((int) ($row['projects_id'] ?? 0), $row['project_code']);
+
+            return $row;
+        }
+
+        return [];
+    }
+
+    public function stages(int $project_id): array
+    {
+        return $this->rows(Schema::TABLE_STAGES, ['esj_projects_id' => $project_id], ['id ASC']);
+    }
+
+    public function phases(int $project_id): array
+    {
+        return $this->rows(Schema::TABLE_PHASES, ['esj_projects_id' => $project_id], ['slot ASC']);
+    }
+
+    public function activities(int $project_id): array
+    {
+        return $this->rows(Schema::TABLE_ACTIVITIES, ['esj_projects_id' => $project_id], ['id ASC']);
+    }
+
+    public function closeStage(int $project_id, string $stage_key): bool
+    {
+        $DB = $this->db();
+        if (!in_array($stage_key, Catalog::constructionReleaseRequiredStages(), true)) {
+            return false;
+        }
+
+        $updated = $DB->update(
+            Schema::TABLE_STAGES,
+            [
+                'status' => Catalog::STATUS_CLOSED,
+                'date_mod' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'esj_projects_id' => $project_id,
+                'stage_key' => $stage_key,
+            ]
+        );
+
+        if ($updated) {
+            $this->recordEvent([
+                'project_id' => $project_id,
+                'event_type' => EventLog::STAGE_CLOSED,
+                'event_at' => date('Y-m-d H:i:s'),
+                'payload' => ['stage_key' => $stage_key],
+            ]);
+        }
+
+        return (bool) $updated;
+    }
+
     private function createGlpiProject(array $project): int
     {
         if (!class_exists('\Project')) {
@@ -210,6 +300,44 @@ final class PlanningRepository
         ]);
 
         return $id ? (int) $id : 0;
+    }
+
+    private function rows(string $table, array $where, array $order): array
+    {
+        $DB = $this->db();
+        $rows = [];
+        $iterator = $DB->request([
+            'FROM' => $table,
+            'WHERE' => $where,
+            'ORDER' => $order,
+        ]);
+
+        foreach ($iterator as $row) {
+            $rows[] = $row;
+        }
+
+        return $rows;
+    }
+
+    private function glpiProjectName(int $projects_id, string $fallback): string
+    {
+        $DB = $this->db();
+        if ($projects_id <= 0) {
+            return $fallback;
+        }
+
+        $iterator = $DB->request([
+            'SELECT' => ['name'],
+            'FROM' => 'glpi_projects',
+            'WHERE' => ['id' => $projects_id],
+            'LIMIT' => 1,
+        ]);
+
+        foreach ($iterator as $row) {
+            return (string) $row['name'];
+        }
+
+        return $fallback;
     }
 
     private function createGlpiProjectTask(int $project_id, string $name): int
