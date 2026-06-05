@@ -15,12 +15,15 @@ esjv4_assert_same(
 );
 
 $templates = Catalog::defaultActivityTemplates();
+$packages = Catalog::phaseActivityPackages();
 
 esjv4_assert_true(isset($templates['core_engineering']), 'Core engineering template must exist');
 esjv4_assert_true(
     in_array('Modelo de conexiones', $templates['core_engineering']['activities'], true),
     'Core engineering template must include connection modeling'
 );
+esjv4_assert_true(isset($packages['core_and_modeling']), 'Compact packages must include core plus modeling');
+esjv4_assert_same(['core_engineering', 'modeling_products'], $packages['core_and_modeling']['template_keys'], 'Core plus modeling expands to both templates');
 
 esjv4_assert_same('blocking', Catalog::DEFAULT_RFI_IMPACT, 'RFI impact must default to blocking');
 esjv4_assert_true(in_array('phase', Catalog::rfiScopes(), true), 'RFI scopes must include phase');

@@ -17,6 +17,7 @@ final class ProjectOverviewService
 
         return [
             'project' => $this->repository->project($project_id),
+            'buildings' => method_exists($this->repository, 'buildings') ? $this->repository->buildings($project_id) : [],
             'stages' => $this->repository->stages($project_id),
             'phases' => $phases,
             'activities' => $activities,

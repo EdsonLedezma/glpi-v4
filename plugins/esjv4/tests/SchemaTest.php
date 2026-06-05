@@ -25,3 +25,8 @@ foreach ([
     esjv4_assert_true(!str_contains($tables[$table], ' datetime '), 'Schema must use timestamp fields for GLPI compatibility in ' . $table);
     esjv4_assert_true(!str_contains($tables[$table], ' datetime'), 'Schema must not use datetime fields for GLPI compatibility in ' . $table);
 }
+
+esjv4_assert_true(
+    str_contains($tables[Schema::TABLE_PHASES], '`esj_buildings_id`'),
+    'Phase schema must link phases to buildings'
+);

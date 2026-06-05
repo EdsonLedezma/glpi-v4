@@ -15,6 +15,7 @@ $tests = [
     __DIR__ . '/PluginTest.php',
     __DIR__ . '/CatalogTest.php',
     __DIR__ . '/SapMailParserTest.php',
+    __DIR__ . '/SapIntakeServiceTest.php',
     __DIR__ . '/SchemaTest.php',
     __DIR__ . '/TemplateServiceTest.php',
     __DIR__ . '/ProjectPlanBuilderTest.php',

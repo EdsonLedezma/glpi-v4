@@ -35,6 +35,24 @@ final class Schema
             }
         }
 
+        return self::migrate();
+    }
+
+    private static function migrate(): bool
+    {
+        global $DB;
+
+        if (
+            isset($DB)
+            && method_exists($DB, 'fieldExists')
+            && $DB->tableExists(self::TABLE_PHASES)
+            && !$DB->fieldExists(self::TABLE_PHASES, 'esj_buildings_id')
+        ) {
+            return (bool) $DB->doQuery(
+                "ALTER TABLE `" . self::TABLE_PHASES . "` ADD `esj_buildings_id` int unsigned NOT NULL DEFAULT 0 AFTER `projecttasks_id`, ADD KEY `building` (`esj_buildings_id`)"
+            );
+        }
+
         return true;
     }
 
@@ -74,6 +92,7 @@ final class Schema
                 `id` int unsigned NOT NULL AUTO_INCREMENT,
                 `esj_projects_id` int unsigned NOT NULL DEFAULT 0,
                 `projecttasks_id` int unsigned NOT NULL DEFAULT 0,
+                `esj_buildings_id` int unsigned NOT NULL DEFAULT 0,
                 `slot` int unsigned NOT NULL DEFAULT 0,
                 `name` varchar(255) NOT NULL DEFAULT '',
                 `status` varchar(80) NOT NULL DEFAULT 'planned',
@@ -84,6 +103,7 @@ final class Schema
                 `date_mod` timestamp NOT NULL,
                 PRIMARY KEY (`id`),
                 KEY `project_slot` (`esj_projects_id`, `slot`),
+                KEY `building` (`esj_buildings_id`),
                 KEY `status` (`status`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
             self::TABLE_BUILDINGS => "CREATE TABLE `" . self::TABLE_BUILDINGS . "` (

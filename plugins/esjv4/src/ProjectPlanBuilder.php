@@ -45,17 +45,20 @@ final class ProjectPlanBuilder
             $phases[] = [
                 'slot' => $slot_number,
                 'name' => $name,
+                'building_key' => trim((string) ($slot['building_key'] ?? '')),
                 'status' => Catalog::STATUS_BLOCKED,
-                'activities' => self::buildActivities($slot['activity_template_keys'] ?? []),
+                'activities' => self::buildActivities($slot['activity_package_key'] ?? 'none'),
             ];
         }
 
         return $phases;
     }
 
-    private static function buildActivities(array $template_keys): array
+    private static function buildActivities(string $package_key): array
     {
         $templates = Catalog::defaultActivityTemplates();
+        $packages = Catalog::phaseActivityPackages();
+        $template_keys = $packages[$package_key]['template_keys'] ?? [];
         $activities = [];
         $seen = [];
 

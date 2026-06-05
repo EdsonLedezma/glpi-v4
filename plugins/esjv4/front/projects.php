@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use GlpiPlugin\Esjv4\Catalog;
 use GlpiPlugin\Esjv4\PlanningRepository;
 use GlpiPlugin\Esjv4\Plugin;
 
@@ -48,7 +49,11 @@ if ($projects === []) {
         echo '<td>' . htmlescape((string) ($project['quotation_code'] ?? '')) . '</td>';
         echo '<td>' . htmlescape((string) ($project['location'] ?? '')) . '</td>';
         echo '<td>' . status_badge((string) ($project['status'] ?? '')) . '</td>';
-        echo '<td class="text-end"><a class="btn btn-sm btn-outline-primary" href="/plugins/esjv4/front/project.php?id=' . $project_id . '">Abrir</a></td>';
+        if ((string) ($project['status'] ?? '') === Catalog::STATUS_PENDING_PLANNING) {
+            echo '<td class="text-end"><a class="btn btn-sm btn-primary" href="/plugins/esjv4/front/planning.php?project_id=' . $project_id . '">Planear</a></td>';
+        } else {
+            echo '<td class="text-end"><a class="btn btn-sm btn-outline-primary" href="/plugins/esjv4/front/project.php?id=' . $project_id . '">Abrir</a></td>';
+        }
         echo '</tr>';
     }
 

@@ -10,6 +10,8 @@ use DateTimeZone;
 final class EventLog
 {
     public const PROJECT_CREATED = 'project_created';
+    public const SAP_MAIL_RECEIVED = 'sap_mail_received';
+    public const PLANNING_COMPLETED = 'planning_completed';
     public const PHASE_DEFINED = 'phase_defined';
     public const PHASE_ACTIVATED = 'phase_activated';
     public const TASK_CREATED = 'task_created';

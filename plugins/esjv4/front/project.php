@@ -43,6 +43,13 @@ foreach ($overview['phases'] as $phase) {
     $phase_names[(int) $phase['id']] = (string) $phase['name'];
 }
 
+$building_names = [];
+foreach ($overview['buildings'] as $building) {
+    $label = (string) ($building['client_label'] ?? '');
+    $name = (string) ($building['name'] ?? '');
+    $building_names[(int) $building['id']] = $label !== '' ? $name . ' / ' . $label : $name;
+}
+
 Html::header('Proyecto ESJ V4', $_SERVER['PHP_SELF'], 'tools', 'esjv4');
 
 echo '<div class="container-fluid">';
@@ -108,12 +115,14 @@ echo '<div class="card-header">Fases</div>';
 echo '<div class="card-body p-0">';
 echo '<div class="table-responsive">';
 echo '<table class="table table-sm align-middle mb-0">';
-echo '<thead><tr><th>Fase</th><th>Nombre</th><th>Estado</th><th>Inicio planeado</th><th>Termino limite</th></tr></thead><tbody>';
+echo '<thead><tr><th>Fase</th><th>Nombre</th><th>Nave</th><th>Estado</th><th>Inicio planeado</th><th>Termino limite</th></tr></thead><tbody>';
 
 foreach ($overview['phases'] as $phase) {
+    $building_id = (int) ($phase['esj_buildings_id'] ?? 0);
     echo '<tr>';
     echo '<td>Fase ' . sprintf('%02d', (int) $phase['slot']) . '</td>';
     echo '<td>' . htmlescape((string) $phase['name']) . '</td>';
+    echo '<td>' . htmlescape($building_names[$building_id] ?? '-') . '</td>';
     echo '<td>' . status_badge((string) $phase['status']) . '</td>';
     echo '<td>' . htmlescape(short_date((string) ($phase['planned_start'] ?? ''))) . '</td>';
     echo '<td>' . htmlescape(short_date((string) ($phase['planned_end'] ?? ''))) . '</td>';
@@ -131,13 +140,15 @@ if ($overview['activities'] === []) {
 } else {
     echo '<div class="table-responsive">';
     echo '<table class="table table-sm align-middle mb-0">';
-    echo '<thead><tr><th>Actividad</th><th>Fase</th><th>Producto</th><th>Estado</th><th>Asignado</th></tr></thead><tbody>';
+    echo '<thead><tr><th>Actividad</th><th>Fase</th><th>Nave</th><th>Producto</th><th>Estado</th><th>Asignado</th></tr></thead><tbody>';
 
     foreach ($overview['activities'] as $activity) {
         $phase_id = (int) ($activity['esj_phases_id'] ?? 0);
+        $building_id = (int) ($activity['esj_buildings_id'] ?? 0);
         echo '<tr>';
         echo '<td>' . htmlescape((string) $activity['name']) . '</td>';
         echo '<td>' . htmlescape($phase_names[$phase_id] ?? 'Sin fase') . '</td>';
+        echo '<td>' . htmlescape($building_names[$building_id] ?? '-') . '</td>';
         echo '<td>' . htmlescape((string) ($activity['product'] ?? '')) . '</td>';
         echo '<td>' . status_badge((string) $activity['status']) . '</td>';
         echo '<td>' . ((int) ($activity['assigned_users_id'] ?? 0) > 0 ? (int) $activity['assigned_users_id'] : '-') . '</td>';

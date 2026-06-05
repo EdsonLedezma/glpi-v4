@@ -10,14 +10,20 @@ final class PlanningRepository
     {
         return [
             'createProject' => Schema::TABLE_PROJECTS,
+            'createProjectFromSap' => Schema::TABLE_PROJECTS,
             'createStage' => Schema::TABLE_STAGES,
+            'createBuilding' => Schema::TABLE_BUILDINGS,
             'createPhase' => Schema::TABLE_PHASES,
             'createActivity' => Schema::TABLE_ACTIVITIES,
             'recordEvent' => Schema::TABLE_EVENTS,
+            'findProjectByRawHash' => Schema::TABLE_PROJECTS,
+            'findProjectByCode' => Schema::TABLE_PROJECTS,
+            'markPlanningCompleted' => Schema::TABLE_PROJECTS,
             'constructionReleaseContext' => Schema::TABLE_STAGES,
             'activateConstructionPhases' => Schema::TABLE_PHASES,
             'projects' => Schema::TABLE_PROJECTS,
             'project' => Schema::TABLE_PROJECTS,
+            'buildings' => Schema::TABLE_BUILDINGS,
             'stages' => Schema::TABLE_STAGES,
             'phases' => Schema::TABLE_PHASES,
             'activities' => Schema::TABLE_ACTIVITIES,
@@ -39,12 +45,25 @@ final class PlanningRepository
             'customer_name' => $project['customer_name'],
             'location' => $project['location'],
             'status' => $project['status'],
-            'raw_payload_hash' => hash('sha256', json_encode($project, JSON_THROW_ON_ERROR)),
+            'raw_payload_hash' => $project['raw_payload_hash'] ?? hash('sha256', json_encode($project, JSON_THROW_ON_ERROR)),
             'date_creation' => $now,
             'date_mod' => $now,
         ]);
 
         return (int) $DB->insertId();
+    }
+
+    public function createProjectFromSap(array $project): int
+    {
+        return $this->createProject([
+            'project_code' => $project['project_code'],
+            'project_name' => $project['project_name'],
+            'customer_name' => $project['customer_name'],
+            'quotation_code' => $project['quotation_code'],
+            'location' => $project['location'],
+            'status' => $project['status'] ?? Catalog::STATUS_PENDING_PLANNING,
+            'raw_payload_hash' => $project['raw_hash'] ?? null,
+        ]);
     }
 
     public function createStage(int $project_id, array $stage): int
@@ -65,7 +84,24 @@ final class PlanningRepository
         return (int) $DB->insertId();
     }
 
-    public function createPhase(int $project_id, array $phase): int
+    public function createBuilding(int $project_id, array $building): int
+    {
+        $DB = $this->db();
+
+        $now = date('Y-m-d H:i:s');
+        $DB->insert(Schema::TABLE_BUILDINGS, [
+            'esj_projects_id' => $project_id,
+            'esj_phases_id' => 0,
+            'name' => $building['name'],
+            'client_label' => $building['client_label'] ?? '',
+            'date_creation' => $now,
+            'date_mod' => $now,
+        ]);
+
+        return (int) $DB->insertId();
+    }
+
+    public function createPhase(int $project_id, array $phase, int $building_id = 0): int
     {
         $DB = $this->db();
 
@@ -75,6 +111,7 @@ final class PlanningRepository
         $DB->insert(Schema::TABLE_PHASES, [
             'esj_projects_id' => $project_id,
             'projecttasks_id' => $project_task_id,
+            'esj_buildings_id' => $building_id,
             'slot' => $phase['slot'],
             'name' => $phase['name'],
             'status' => $phase['status'],
@@ -88,7 +125,7 @@ final class PlanningRepository
         return (int) $DB->insertId();
     }
 
-    public function createActivity(int $project_id, int $phase_id, array $activity): int
+    public function createActivity(int $project_id, int $phase_id, array $activity, int $building_id = 0): int
     {
         $DB = $this->db();
 
@@ -99,7 +136,7 @@ final class PlanningRepository
             'projecttasks_id' => $project_task_id,
             'esj_projects_id' => $project_id,
             'esj_phases_id' => $phase_id,
-            'esj_buildings_id' => 0,
+            'esj_buildings_id' => $building_id,
             'esj_stages_id' => 0,
             'product' => $activity['product'] ?? '',
             'name' => $activity['name'],
@@ -110,6 +147,38 @@ final class PlanningRepository
         ]);
 
         return (int) $DB->insertId();
+    }
+
+    public function findProjectByRawHash(string $raw_hash): array
+    {
+        if ($raw_hash === '') {
+            return [];
+        }
+
+        return $this->projectRow(['raw_payload_hash' => $raw_hash]);
+    }
+
+    public function findProjectByCode(string $project_code): array
+    {
+        if ($project_code === '') {
+            return [];
+        }
+
+        return $this->projectRow(['sap_project_code' => $project_code]);
+    }
+
+    public function markPlanningCompleted(int $project_id): bool
+    {
+        $DB = $this->db();
+
+        return (bool) $DB->update(
+            Schema::TABLE_PROJECTS,
+            [
+                'status' => Catalog::STATUS_PLANNED,
+                'date_mod' => date('Y-m-d H:i:s'),
+            ],
+            ['id' => $project_id]
+        );
     }
 
     public function recordEvent(array $event): int
@@ -215,21 +284,12 @@ final class PlanningRepository
 
     public function project(int $project_id): array
     {
-        $DB = $this->db();
-        $iterator = $DB->request([
-            'FROM' => Schema::TABLE_PROJECTS,
-            'WHERE' => ['id' => $project_id],
-            'LIMIT' => 1,
-        ]);
+        return $this->projectRow(['id' => $project_id]);
+    }
 
-        foreach ($iterator as $row) {
-            $row['project_code'] = (string) ($row['sap_project_code'] ?? '');
-            $row['project_name'] = $this->glpiProjectName((int) ($row['projects_id'] ?? 0), $row['project_code']);
-
-            return $row;
-        }
-
-        return [];
+    public function buildings(int $project_id): array
+    {
+        return $this->rows(Schema::TABLE_BUILDINGS, ['esj_projects_id' => $project_id], ['id ASC']);
     }
 
     public function stages(int $project_id): array
@@ -317,6 +377,26 @@ final class PlanningRepository
         }
 
         return $rows;
+    }
+
+    private function projectRow(array $where): array
+    {
+        $DB = $this->db();
+        $iterator = $DB->request([
+            'FROM' => Schema::TABLE_PROJECTS,
+            'WHERE' => $where,
+            'LIMIT' => 1,
+        ]);
+
+        foreach ($iterator as $row) {
+            $row['project_code'] = (string) ($row['sap_project_code'] ?? '');
+            $row['project_name'] = $this->glpiProjectName((int) ($row['projects_id'] ?? 0), $row['project_code']);
+            $row['raw_hash'] = (string) ($row['raw_payload_hash'] ?? '');
+
+            return $row;
+        }
+
+        return [];
     }
 
     private function glpiProjectName(int $projects_id, string $fallback): string

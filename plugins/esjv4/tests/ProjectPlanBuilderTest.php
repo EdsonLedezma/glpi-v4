@@ -9,8 +9,8 @@ esjv4_assert_true(class_exists(ProjectPlanBuilder::class), 'ProjectPlanBuilder c
 
 $plan = ProjectPlanBuilder::buildInitialPlan([
     'phase_slots' => [
-        ['slot' => 1, 'name' => 'Fase 01', 'activity_template_keys' => ['core_engineering']],
-        ['slot' => 2, 'name' => 'Fase 02', 'activity_template_keys' => []],
+        ['slot' => 1, 'name' => 'Fase 01', 'building_key' => 'b1', 'activity_package_key' => 'core_and_modeling'],
+        ['slot' => 2, 'name' => 'Fase 02', 'building_key' => 'b2', 'activity_package_key' => 'none'],
     ],
 ]);
 
@@ -27,10 +27,16 @@ esjv4_assert_same(Catalog::STATUS_BLOCKED, $plan['gate_stages'][2]['status'], 'C
 esjv4_assert_same(2, count($plan['phases']), 'Only selected phase slots become project phases');
 esjv4_assert_same(Catalog::STATUS_BLOCKED, $plan['phases'][0]['status'], 'Construction phase starts blocked');
 esjv4_assert_same('Fase 01', $plan['phases'][0]['name'], 'Phase keeps planning name');
+esjv4_assert_same('b1', $plan['phases'][0]['building_key'], 'Phase keeps selected building key');
 
 esjv4_assert_true(
     in_array('Modelo de conexiones', array_column($plan['phases'][0]['activities'], 'name'), true),
-    'Phase with core template must preload core activities'
+    'Phase with core package must preload core activities'
 );
 
-esjv4_assert_same([], $plan['phases'][1]['activities'], 'Phase without selected templates starts without activities');
+esjv4_assert_true(
+    in_array('Columnas', array_column($plan['phases'][0]['activities'], 'name'), true),
+    'Phase with modeling package must preload modeling product activities'
+);
+
+esjv4_assert_same([], $plan['phases'][1]['activities'], 'Phase with none package starts without activities');

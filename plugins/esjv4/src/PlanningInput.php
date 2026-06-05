@@ -14,6 +14,7 @@ final class PlanningInput
             'customer_name' => self::text($input['customer_name'] ?? ''),
             'quotation_code' => self::text($input['quotation_code'] ?? ''),
             'location' => self::text($input['location'] ?? ''),
+            'buildings' => self::buildings($input['buildings'] ?? []),
             'phase_slots' => self::phaseSlots($input['phase_slots'] ?? []),
         ];
     }
@@ -30,11 +31,37 @@ final class PlanningInput
             $errors['project_name'] = 'El nombre del proyecto es obligatorio.';
         }
 
+        if (($input['buildings'] ?? []) === []) {
+            $errors['buildings'] = 'Define al menos una nave.';
+        }
+
         if (($input['phase_slots'] ?? []) === []) {
             $errors['phase_slots'] = 'Selecciona al menos una fase.';
         }
 
         return $errors;
+    }
+
+    private static function buildings(array $buildings): array
+    {
+        $normalized = [];
+
+        foreach ($buildings as $index => $building) {
+            $name = self::text($building['name'] ?? '');
+
+            if ($name === '') {
+                continue;
+            }
+
+            $key = self::text($building['key'] ?? '');
+            $normalized[] = [
+                'key' => $key !== '' ? $key : 'b' . ((int) $index + 1),
+                'name' => $name,
+                'client_label' => self::text($building['client_label'] ?? ''),
+            ];
+        }
+
+        return $normalized;
     }
 
     private static function phaseSlots(array $phase_slots): array
@@ -56,7 +83,8 @@ final class PlanningInput
             $normalized[] = [
                 'slot' => $slot,
                 'name' => $name,
-                'activity_template_keys' => self::templateKeys($phase_slot['activity_template_keys'] ?? []),
+                'building_key' => self::text($phase_slot['building_key'] ?? ''),
+                'activity_package_key' => self::packageKey($phase_slot['activity_package_key'] ?? 'none'),
                 'planned_start' => self::text($phase_slot['planned_start'] ?? ''),
                 'planned_end' => self::text($phase_slot['planned_end'] ?? ''),
             ];
@@ -67,24 +95,11 @@ final class PlanningInput
         return $normalized;
     }
 
-    private static function templateKeys(mixed $value): array
+    private static function packageKey(mixed $value): string
     {
-        if (!is_array($value)) {
-            $value = [$value];
-        }
+        $key = self::text($value);
 
-        $allowed = array_keys(Catalog::defaultActivityTemplates());
-        $keys = [];
-
-        foreach ($value as $key) {
-            $key = self::text($key);
-
-            if ($key !== '' && in_array($key, $allowed, true) && !in_array($key, $keys, true)) {
-                $keys[] = $key;
-            }
-        }
-
-        return $keys;
+        return isset(Catalog::phaseActivityPackages()[$key]) ? $key : 'none';
     }
 
     private static function enabled(mixed $value): bool

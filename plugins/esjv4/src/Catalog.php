@@ -7,6 +7,7 @@ namespace GlpiPlugin\Esjv4;
 final class Catalog
 {
     public const STATUS_PLANNED = 'planned';
+    public const STATUS_PENDING_PLANNING = 'pending_planning';
     public const STATUS_BLOCKED = 'blocked';
     public const STATUS_ACTIVE = 'active';
     public const STATUS_IN_PROGRESS = 'in_progress';
@@ -117,6 +118,28 @@ final class Catalog
                     'Escaleras',
                     'Barandales',
                 ],
+            ],
+        ];
+    }
+
+    public static function phaseActivityPackages(): array
+    {
+        return [
+            'none' => [
+                'name' => 'Sin plantilla',
+                'template_keys' => [],
+            ],
+            'core_engineering' => [
+                'name' => 'Ingenieria core',
+                'template_keys' => ['core_engineering'],
+            ],
+            'modeling_products' => [
+                'name' => 'Productos de modelado',
+                'template_keys' => ['modeling_products'],
+            ],
+            'core_and_modeling' => [
+                'name' => 'Ingenieria core + modelado',
+                'template_keys' => ['core_engineering', 'modeling_products'],
             ],
         ];
     }
