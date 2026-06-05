@@ -1,0 +1,41 @@
+name: glpi-v4
+
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${GLPI_DB_NAME}
+      MYSQL_USER: ${GLPI_DB_USER}
+      MYSQL_PASSWORD: ${GLPI_DB_PASSWORD}
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    volumes:
+      - db_data:/var/lib/mysql
+
+  glpi:
+    image: esj/glpi:11.0.7-esj
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      GLPI_DB_HOST: ${GLPI_DB_HOST}
+      GLPI_DB_PORT: ${GLPI_DB_PORT:-3306}
+      GLPI_DB_NAME: ${GLPI_DB_NAME}
+      GLPI_DB_USER: ${GLPI_DB_USER}
+      GLPI_DB_PASSWORD: ${GLPI_DB_PASSWORD}
+    ports:
+      - "${GLPI_HTTP_PORT:-8080}:80"
+    volumes:
+      - glpi_data:/var/glpi
+      - ./plugins:/var/www/glpi/plugins
+
+volumes:
+  db_data:
+  glpi_data:
