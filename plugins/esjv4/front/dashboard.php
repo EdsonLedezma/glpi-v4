@@ -8,6 +8,8 @@ use GlpiPlugin\Esjv4\Schema;
 require_once dirname(__DIR__, 3) . '/inc/includes.php';
 require_once dirname(__DIR__) . '/setup.php';
 
+Session::checkCentralAccess();
+
 Html::header(Plugin::NAME, $_SERVER['PHP_SELF'], 'tools', 'esjv4');
 
 $health = Schema::health();
@@ -21,6 +23,7 @@ echo '<div class="card-header">Estado del plugin</div>';
 echo '<div class="card-body">';
 echo '<p><strong>Version:</strong> ' . htmlescape(Plugin::VERSION) . '</p>';
 echo '<p><strong>Esquema:</strong> ' . ($ready ? 'Listo' : 'Pendiente de instalacion') . '</p>';
+echo '<a class="btn btn-primary me-2" href="/plugins/esjv4/front/planning.php">Nuevo proyecto</a>';
 echo '<a class="btn btn-primary" href="/plugins/esjv4/front/templates.php">Ver plantillas</a>';
 echo '</div></div></div>';
 

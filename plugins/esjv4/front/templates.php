@@ -9,6 +9,8 @@ use GlpiPlugin\Esjv4\TemplateService;
 require_once dirname(__DIR__, 3) . '/inc/includes.php';
 require_once dirname(__DIR__) . '/setup.php';
 
+Session::checkCentralAccess();
+
 Html::header('Plantillas ESJ V4', $_SERVER['PHP_SELF'], 'tools', 'esjv4');
 
 $template = TemplateService::defaultProjectTemplate();

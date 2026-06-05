@@ -22,14 +22,25 @@
 - `plugins/esjv4/src/ProjectPlanBuilder.php`: builds the initial ESJ plan from selected phase slots and activity templates.
 - `plugins/esjv4/src/GateService.php`: gate rules for construction release.
 - `plugins/esjv4/src/Menu.php`: ESJ menu shell.
+- `plugins/esjv4/src/PlanningInput.php`: validates and normalizes Planeacion project intake data.
+- `plugins/esjv4/src/PlanningService.php`: creates the initial ESJ project structure from Planeacion data.
+- `plugins/esjv4/src/PlanningRepository.php`: persists ESJ projects, stages, phases, activities, and events.
+- `plugins/esjv4/src/GateReleaseService.php`: activates blocked construction phases once the release gate opens.
+- `plugins/esjv4/src/SapMailParser.php`: extracts normalized ESJ project data from the real SAP notification format.
 - `plugins/esjv4/front/dashboard.php`: first landing page confirming plugin health.
 - `plugins/esjv4/front/templates.php`: simple read-only view of default templates.
+- `plugins/esjv4/front/planning.php`: Planeacion intake form for creating ESJ projects and selecting phases/templates.
 - `plugins/esjv4/tests/run.php`: standalone test runner for pure domain logic.
 - `plugins/esjv4/tests/CatalogTest.php`: validates catalog and defaults.
+- `plugins/esjv4/tests/SapMailParserTest.php`: validates parsing of the real SAP email format.
 - `plugins/esjv4/tests/PluginTest.php`: validates plugin identity and version metadata.
 - `plugins/esjv4/tests/SchemaTest.php`: validates table definitions and GLPI-compatible timestamp fields.
 - `plugins/esjv4/tests/TemplateServiceTest.php`: validates the default 20-phase project template.
 - `plugins/esjv4/tests/ProjectPlanBuilderTest.php`: validates selected phases, preloaded activities, and blocked construction phases.
+- `plugins/esjv4/tests/PlanningInputTest.php`: validates project intake normalization and required fields.
+- `plugins/esjv4/tests/PlanningServiceTest.php`: validates initial project structure creation against a fake repository.
+- `plugins/esjv4/tests/PlanningRepositoryTest.php`: validates repository table responsibilities.
+- `plugins/esjv4/tests/GateReleaseServiceTest.php`: validates construction gate release behavior.
 - `plugins/esjv4/tests/GateServiceTest.php`: validates construction release gate logic.
 - `plugins/esjv4/tests/EventLogTest.php`: validates duration math in seconds using calendar time.
 
