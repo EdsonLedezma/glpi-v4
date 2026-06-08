@@ -16,6 +16,7 @@ esjv4_assert_same(Schema::TABLE_BUILDINGS, $map['createBuilding'], 'createBuildi
 esjv4_assert_same(Schema::TABLE_PHASES, $map['createPhase'], 'createPhase writes ESJ phases');
 esjv4_assert_same(Schema::TABLE_ACTIVITIES, $map['createActivity'], 'createActivity writes ESJ activities');
 esjv4_assert_same(Schema::TABLE_EVENTS, $map['recordEvent'], 'recordEvent writes ESJ events');
+esjv4_assert_same(Schema::TABLE_EVENTS, $map['projectEvents'], 'projectEvents reads ESJ events');
 esjv4_assert_same(Schema::TABLE_PROJECTS, $map['findProjectByRawHash'], 'findProjectByRawHash reads ESJ projects');
 esjv4_assert_same(Schema::TABLE_PROJECTS, $map['findProjectByCode'], 'findProjectByCode reads ESJ projects');
 esjv4_assert_same(Schema::TABLE_PROJECTS, $map['markPlanningCompleted'], 'markPlanningCompleted updates ESJ projects');

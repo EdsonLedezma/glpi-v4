@@ -66,6 +66,7 @@ echo '</div>';
 echo '<div class="d-flex gap-2">';
 echo '<a class="btn btn-primary" href="/plugins/esjv4/front/kanban.php?project_id=' . $project_id . '">Kanban</a>';
 echo '<a class="btn btn-outline-primary" href="/plugins/esjv4/front/rfis.php?project_id=' . $project_id . '">RFIs</a>';
+echo '<a class="btn btn-outline-primary" href="/plugins/esjv4/front/times.php?project_id=' . $project_id . '">Tiempos</a>';
 echo '<a class="btn btn-outline-secondary" href="/plugins/esjv4/front/planning.php">Planeacion</a>';
 echo '</div>';
 echo '</div>';

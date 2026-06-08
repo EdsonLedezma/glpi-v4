@@ -16,6 +16,7 @@ final class PlanningRepository
             'createPhase' => Schema::TABLE_PHASES,
             'createActivity' => Schema::TABLE_ACTIVITIES,
             'recordEvent' => Schema::TABLE_EVENTS,
+            'projectEvents' => Schema::TABLE_EVENTS,
             'findProjectByRawHash' => Schema::TABLE_PROJECTS,
             'findProjectByCode' => Schema::TABLE_PROJECTS,
             'markPlanningCompleted' => Schema::TABLE_PROJECTS,
@@ -204,6 +205,11 @@ final class PlanningRepository
         ]);
 
         return (int) $DB->insertId();
+    }
+
+    public function projectEvents(int $project_id): array
+    {
+        return $this->rows(Schema::TABLE_EVENTS, ['esj_projects_id' => $project_id], ['event_at ASC', 'id ASC']);
     }
 
     public function constructionReleaseContext(int $project_id): array

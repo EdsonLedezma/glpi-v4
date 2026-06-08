@@ -27,6 +27,7 @@ $tests = [
     __DIR__ . '/KanbanServiceTest.php',
     __DIR__ . '/ActivityActionServiceTest.php',
     __DIR__ . '/RfiLinkServiceTest.php',
+    __DIR__ . '/TimeReportServiceTest.php',
     __DIR__ . '/GateReleaseServiceTest.php',
     __DIR__ . '/EventLogTest.php',
     __DIR__ . '/GateServiceTest.php',
