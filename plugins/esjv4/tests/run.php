@@ -13,6 +13,8 @@ if (is_dir($src)) {
 
 $tests = [
     __DIR__ . '/PluginTest.php',
+    __DIR__ . '/MenuTest.php',
+    __DIR__ . '/AccessProvisioningServiceTest.php',
     __DIR__ . '/CatalogTest.php',
     __DIR__ . '/SapMailParserTest.php',
     __DIR__ . '/SapIntakeServiceTest.php',
