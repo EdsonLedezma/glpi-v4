@@ -27,4 +27,9 @@ esjv4_assert_same(Schema::TABLE_BUILDINGS, $map['buildings'], 'buildings reads E
 esjv4_assert_same(Schema::TABLE_STAGES, $map['stages'], 'stages reads gate stages');
 esjv4_assert_same(Schema::TABLE_PHASES, $map['phases'], 'phases reads ESJ phases');
 esjv4_assert_same(Schema::TABLE_ACTIVITIES, $map['activities'], 'activities reads ESJ activities');
+esjv4_assert_same(Schema::TABLE_ACTIVITIES, $map['activity'], 'activity reads one ESJ activity');
+esjv4_assert_same(Schema::TABLE_ACTIVITIES, $map['updateActivityStatus'], 'updateActivityStatus updates ESJ activities');
+esjv4_assert_same(Schema::TABLE_TICKET_LINKS, $map['ticketLinks'], 'ticketLinks reads project ticket links');
+esjv4_assert_same(Schema::TABLE_TICKET_LINKS, $map['createTicketLink'], 'createTicketLink writes ticket links');
+esjv4_assert_same(Schema::TABLE_TICKET_LINKS, $map['blockingRfisForActivity'], 'blockingRfisForActivity reads ticket links');
 esjv4_assert_same(Schema::TABLE_STAGES, $map['closeStage'], 'closeStage updates ESJ stages');

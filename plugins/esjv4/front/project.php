@@ -63,7 +63,11 @@ echo htmlescape((string) ($project['quotation_code'] ?? '')) . ' / ';
 echo htmlescape((string) ($project['location'] ?? ''));
 echo '</p>';
 echo '</div>';
-echo '<a class="btn btn-outline-secondary" href="/plugins/esjv4/front/planning.php">Nuevo proyecto</a>';
+echo '<div class="d-flex gap-2">';
+echo '<a class="btn btn-primary" href="/plugins/esjv4/front/kanban.php?project_id=' . $project_id . '">Kanban</a>';
+echo '<a class="btn btn-outline-primary" href="/plugins/esjv4/front/rfis.php?project_id=' . $project_id . '">RFIs</a>';
+echo '<a class="btn btn-outline-secondary" href="/plugins/esjv4/front/planning.php">Planeacion</a>';
+echo '</div>';
 echo '</div>';
 
 echo '<div class="row g-3 mb-3">';

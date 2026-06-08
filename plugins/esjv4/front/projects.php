@@ -52,7 +52,10 @@ if ($projects === []) {
         if ((string) ($project['status'] ?? '') === Catalog::STATUS_PENDING_PLANNING) {
             echo '<td class="text-end"><a class="btn btn-sm btn-primary" href="/plugins/esjv4/front/planning.php?project_id=' . $project_id . '">Planear</a></td>';
         } else {
-            echo '<td class="text-end"><a class="btn btn-sm btn-outline-primary" href="/plugins/esjv4/front/project.php?id=' . $project_id . '">Abrir</a></td>';
+            echo '<td class="text-end">';
+            echo '<a class="btn btn-sm btn-outline-primary me-1" href="/plugins/esjv4/front/project.php?id=' . $project_id . '">Abrir</a>';
+            echo '<a class="btn btn-sm btn-primary" href="/plugins/esjv4/front/kanban.php?project_id=' . $project_id . '">Kanban</a>';
+            echo '</td>';
         }
         echo '</tr>';
     }

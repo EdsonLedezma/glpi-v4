@@ -20,6 +20,7 @@ final class Menu
             'links' => [
                 'search' => '/plugins/esjv4/front/projects.php',
                 'add' => '/plugins/esjv4/front/planning.php',
+                'kanban' => '/plugins/esjv4/front/projects.php',
                 'templates' => '/plugins/esjv4/front/templates.php',
             ],
         ];

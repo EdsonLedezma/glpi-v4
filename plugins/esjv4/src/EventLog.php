@@ -16,6 +16,7 @@ final class EventLog
     public const PHASE_ACTIVATED = 'phase_activated';
     public const TASK_CREATED = 'task_created';
     public const TASK_ASSIGNED = 'task_assigned';
+    public const TASK_STARTED = 'task_started';
     public const TASK_PAUSED_RFI = 'task_paused_rfi';
     public const RFI_OPENED = 'rfi_opened';
     public const RFI_CLOSED = 'rfi_closed';

@@ -77,6 +77,7 @@ final class Catalog
             'project',
             'phase',
             'building',
+            'activity',
             'task',
             'product',
         ];

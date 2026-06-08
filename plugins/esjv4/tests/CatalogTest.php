@@ -27,4 +27,5 @@ esjv4_assert_same(['core_engineering', 'modeling_products'], $packages['core_and
 
 esjv4_assert_same('blocking', Catalog::DEFAULT_RFI_IMPACT, 'RFI impact must default to blocking');
 esjv4_assert_true(in_array('phase', Catalog::rfiScopes(), true), 'RFI scopes must include phase');
+esjv4_assert_true(in_array('activity', Catalog::rfiScopes(), true), 'RFI scopes must include activity');
 esjv4_assert_true(in_array('task', Catalog::rfiScopes(), true), 'RFI scopes must include task');

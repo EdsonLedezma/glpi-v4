@@ -27,6 +27,11 @@ final class PlanningRepository
             'stages' => Schema::TABLE_STAGES,
             'phases' => Schema::TABLE_PHASES,
             'activities' => Schema::TABLE_ACTIVITIES,
+            'activity' => Schema::TABLE_ACTIVITIES,
+            'updateActivityStatus' => Schema::TABLE_ACTIVITIES,
+            'ticketLinks' => Schema::TABLE_TICKET_LINKS,
+            'createTicketLink' => Schema::TABLE_TICKET_LINKS,
+            'blockingRfisForActivity' => Schema::TABLE_TICKET_LINKS,
             'closeStage' => Schema::TABLE_STAGES,
         ];
     }
@@ -305,6 +310,83 @@ final class PlanningRepository
     public function activities(int $project_id): array
     {
         return $this->rows(Schema::TABLE_ACTIVITIES, ['esj_projects_id' => $project_id], ['id ASC']);
+    }
+
+    public function activity(int $activity_id): array
+    {
+        $DB = $this->db();
+        $iterator = $DB->request([
+            'FROM' => Schema::TABLE_ACTIVITIES,
+            'WHERE' => ['id' => $activity_id],
+            'LIMIT' => 1,
+        ]);
+
+        foreach ($iterator as $row) {
+            return $row;
+        }
+
+        return [];
+    }
+
+    public function updateActivityStatus(int $activity_id, string $status): bool
+    {
+        $DB = $this->db();
+
+        return (bool) $DB->update(
+            Schema::TABLE_ACTIVITIES,
+            [
+                'status' => $status,
+                'date_mod' => date('Y-m-d H:i:s'),
+            ],
+            ['id' => $activity_id]
+        );
+    }
+
+    public function ticketLinks(int $project_id): array
+    {
+        return $this->rows(Schema::TABLE_TICKET_LINKS, ['esj_projects_id' => $project_id], ['id DESC']);
+    }
+
+    public function createTicketLink(array $link): int
+    {
+        $DB = $this->db();
+        $now = date('Y-m-d H:i:s');
+
+        $DB->insert(Schema::TABLE_TICKET_LINKS, [
+            'tickets_id' => $link['tickets_id'],
+            'esj_projects_id' => $link['project_id'],
+            'esj_phases_id' => $link['phase_id'] ?? 0,
+            'esj_buildings_id' => $link['building_id'] ?? 0,
+            'esj_activities_id' => $link['activity_id'] ?? 0,
+            'scope' => $link['scope'],
+            'impact' => $link['impact'],
+            'status' => $link['status'],
+            'date_creation' => $now,
+            'date_mod' => $now,
+        ]);
+
+        return (int) $DB->insertId();
+    }
+
+    public function blockingRfisForActivity(int $activity_id): array
+    {
+        $DB = $this->db();
+        $rows = [];
+        $iterator = $DB->request([
+            'FROM' => Schema::TABLE_TICKET_LINKS,
+            'WHERE' => [
+                'esj_activities_id' => $activity_id,
+                'impact' => Catalog::DEFAULT_RFI_IMPACT,
+                'NOT' => ['status' => ['resolved', 'closed']],
+            ],
+            'ORDER' => ['id ASC'],
+        ]);
+
+        foreach ($iterator as $row) {
+            $rows[] = $row;
+        }
+
+        return $rows;
     }
 
     public function closeStage(int $project_id, string $stage_key): bool
