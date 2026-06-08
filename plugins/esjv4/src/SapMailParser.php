@@ -8,14 +8,14 @@ final class SapMailParser
 {
     private const LABELS = [
         'project_name' => ['nombre'],
-        'sales_area' => ['area de ventas', 'área de ventas'],
-        'project_number' => ['no.', 'no', 'numero', 'número'],
-        'quotation_code' => ['cotizacion', 'cotización'],
-        'ship_to' => ['destinatario de mercancias', 'destinatario de mercancías'],
+        'sales_area' => ['area de ventas', 'área de ventas', 'Ã¡rea de ventas'],
+        'project_number' => ['no.', 'no', 'numero', 'número', 'nÃºmero'],
+        'quotation_code' => ['cotizacion', 'cotización', 'cotizaciÃ³n'],
+        'ship_to' => ['destinatario de mercancias', 'destinatario de mercancías', 'destinatario de mercancÃ­as'],
         'customer_name' => ['cliente'],
-        'address' => ['direccion', 'dirección'],
-        'location' => ['ubicacion', 'ubicación'],
-        'quote_contact' => ['contacto de la cotizacion', 'contacto de la cotización'],
+        'address' => ['direccion', 'dirección', 'direcciÃ³n'],
+        'location' => ['ubicacion', 'ubicación', 'ubicaciÃ³n'],
+        'quote_contact' => ['contacto de la cotizacion', 'contacto de la cotización', 'contacto de la cotizaciÃ³n'],
     ];
 
     public function parse(string $content): ?array
@@ -109,7 +109,7 @@ final class SapMailParser
                 continue;
             }
 
-            if ($capture && preg_match('/^[A-ZÁÉÍÓÚÑ ]{3,}:$/u', $trimmed)) {
+            if ($capture && preg_match('/^[A-ZÁÉÍÓÚÑÃÃ‰ÃÃ“ÃšÃ‘ ]{3,}:$/u', $trimmed)) {
                 break;
             }
 
@@ -160,6 +160,13 @@ final class SapMailParser
             'ú' => 'u',
             'ü' => 'u',
             'ñ' => 'n',
+            'Ã¡' => 'a',
+            'Ã©' => 'e',
+            'Ã­' => 'i',
+            'Ã³' => 'o',
+            'Ãº' => 'u',
+            'Ã¼' => 'u',
+            'Ã±' => 'n',
         ]);
         $value = preg_replace('/\s+/', ' ', $value) ?? $value;
 

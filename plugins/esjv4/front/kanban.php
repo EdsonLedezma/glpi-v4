@@ -6,6 +6,7 @@ use GlpiPlugin\Esjv4\ActivityActionService;
 use GlpiPlugin\Esjv4\Catalog;
 use GlpiPlugin\Esjv4\KanbanService;
 use GlpiPlugin\Esjv4\PlanningRepository;
+use GlpiPlugin\Esjv4\Plugin;
 
 require_once dirname(__DIR__, 3) . '/inc/includes.php';
 require_once dirname(__DIR__) . '/setup.php';
@@ -95,6 +96,7 @@ function render_card(int $project_id, string $status, array $card): void
     echo '<div class="esj-kanban-actions mt-2 d-flex flex-wrap gap-1">';
     foreach (actions_for_status($status) as $action => $label) {
         echo '<form method="post" action="/plugins/esjv4/front/kanban.php">';
+        echo Plugin::csrfField();
         echo '<input type="hidden" name="project_id" value="' . $project_id . '">';
         echo '<input type="hidden" name="activity_id" value="' . (int) $card['id'] . '">';
         echo '<input type="hidden" name="activity_action" value="' . htmlescape($action) . '">';

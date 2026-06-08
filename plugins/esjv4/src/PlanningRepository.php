@@ -118,6 +118,7 @@ final class PlanningRepository
             'esj_projects_id' => $project_id,
             'projecttasks_id' => $project_task_id,
             'esj_buildings_id' => $building_id,
+            'groups_id' => (int) ($phase['groups_id'] ?? 0),
             'slot' => $phase['slot'],
             'name' => $phase['name'],
             'status' => $phase['status'],

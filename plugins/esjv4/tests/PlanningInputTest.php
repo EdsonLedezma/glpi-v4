@@ -23,9 +23,14 @@ $input = PlanningInput::normalize([
             'name' => ' Fase cimentacion ',
             'enabled' => '1',
             'building_key' => 'b1',
+            'groups_id' => '3',
             'activity_package_key' => 'core_and_modeling',
             'planned_start' => '2026-06-10',
             'planned_end' => '2026-06-20',
+            'stage_tasks' => [
+                ['stage_key' => 'structural_design', 'tasks' => " Revisar memoria \n\n Validar ejes "],
+                ['stage_key' => 'connection_modeling', 'tasks' => ' '],
+            ],
         ],
         [
             'slot' => '2',
@@ -56,8 +61,11 @@ esjv4_assert_same(2, count($input['phase_slots']), 'Only enabled phase slots are
 esjv4_assert_same(1, $input['phase_slots'][0]['slot'], 'Phase slot is normalized to integer');
 esjv4_assert_same('Fase cimentacion', $input['phase_slots'][0]['name'], 'Phase name is trimmed');
 esjv4_assert_same('b1', $input['phase_slots'][0]['building_key'], 'Phase building key is preserved');
+esjv4_assert_same(3, $input['phase_slots'][0]['groups_id'], 'Phase group assignment is normalized');
 esjv4_assert_same('core_and_modeling', $input['phase_slots'][0]['activity_package_key'], 'Phase package key is preserved');
 esjv4_assert_same('2026-06-10', $input['phase_slots'][0]['planned_start'], 'Planned start is preserved');
+esjv4_assert_same('structural_design', $input['phase_slots'][0]['stage_tasks'][0]['stage_key'], 'Phase stage task group keeps stage');
+esjv4_assert_same(['Revisar memoria', 'Validar ejes'], $input['phase_slots'][0]['stage_tasks'][0]['tasks'], 'Phase stage tasks are split by line');
 esjv4_assert_same('', $input['phase_slots'][1]['planned_start'], 'Missing planned start defaults to empty string');
 
 $errors = PlanningInput::validate($input);

@@ -46,15 +46,16 @@ final class ProjectPlanBuilder
                 'slot' => $slot_number,
                 'name' => $name,
                 'building_key' => trim((string) ($slot['building_key'] ?? '')),
+                'groups_id' => max(0, (int) ($slot['groups_id'] ?? 0)),
                 'status' => Catalog::STATUS_BLOCKED,
-                'activities' => self::buildActivities($slot['activity_package_key'] ?? 'none'),
+                'activities' => self::buildActivities($slot['activity_package_key'] ?? 'none', $slot['stage_tasks'] ?? []),
             ];
         }
 
         return $phases;
     }
 
-    private static function buildActivities(string $package_key): array
+    private static function buildActivities(string $package_key, array $stage_tasks): array
     {
         $templates = Catalog::defaultActivityTemplates();
         $packages = Catalog::phaseActivityPackages();
@@ -77,6 +78,24 @@ final class ProjectPlanBuilder
                     'name' => $activity_name,
                     'status' => Catalog::STATUS_BLOCKED,
                     'source_template' => $template_key,
+                    'stage_key' => '',
+                ];
+            }
+        }
+
+        foreach ($stage_tasks as $stage_task) {
+            $stage_key = trim((string) ($stage_task['stage_key'] ?? ''));
+            foreach (($stage_task['tasks'] ?? []) as $task_name) {
+                $task_name = trim((string) $task_name);
+                if ($stage_key === '' || $task_name === '') {
+                    continue;
+                }
+
+                $activities[] = [
+                    'name' => $task_name,
+                    'status' => Catalog::STATUS_BLOCKED,
+                    'source_template' => 'custom_stage_task',
+                    'stage_key' => $stage_key,
                 ];
             }
         }

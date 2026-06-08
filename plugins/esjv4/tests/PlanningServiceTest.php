@@ -95,7 +95,17 @@ $result = $service->completePlanning(7, [
     ],
     'phase_slots' => [
         ['slot' => 1, 'name' => 'Fase 01', 'enabled' => '1', 'building_key' => 'b1', 'activity_package_key' => 'core_engineering'],
-        ['slot' => 2, 'name' => 'Fase 02', 'enabled' => '1', 'building_key' => 'b1', 'activity_package_key' => 'none'],
+        [
+            'slot' => 2,
+            'name' => 'Fase 02',
+            'enabled' => '1',
+            'building_key' => 'b1',
+            'groups_id' => '5',
+            'activity_package_key' => 'none',
+            'stage_tasks' => [
+                ['stage_key' => 'fabrication_drawings', 'tasks' => "Plano A\nPlano B"],
+            ],
+        ],
     ],
 ]);
 
@@ -108,12 +118,17 @@ esjv4_assert_same(1, count($repo->buildings), 'Buildings are persisted during pl
 esjv4_assert_same('Nave A', $repo->buildings[0]['name'], 'Building name is persisted');
 esjv4_assert_same(2, count($repo->phases), 'Selected phases are persisted');
 esjv4_assert_same(1, $repo->phases[0]['building_id'], 'Phase is linked to building');
+esjv4_assert_same(5, $repo->phases[1]['groups_id'], 'Phase group assignment is persisted');
 esjv4_assert_same(Catalog::STATUS_BLOCKED, $repo->phases[0]['status'], 'Construction phase starts blocked');
 esjv4_assert_true(count($repo->activities) > 0, 'Template activities are persisted');
 esjv4_assert_same(1, $repo->activities[0]['building_id'], 'Activity is linked to building');
 esjv4_assert_true(
     in_array('Modelo de conexiones', array_column($repo->activities, 'name'), true),
     'Core template activity is persisted'
+);
+esjv4_assert_true(
+    in_array('Plano A', array_column($repo->activities, 'name'), true),
+    'Custom phase stage task is persisted'
 );
 esjv4_assert_same(EventLog::PLANNING_COMPLETED, $repo->events[0]['event_type'], 'Planning completion event is recorded');
 

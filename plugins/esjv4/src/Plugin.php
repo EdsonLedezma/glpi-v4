@@ -14,4 +14,11 @@ final class Plugin
     {
         return dirname(__DIR__);
     }
+
+    public static function csrfField(): string
+    {
+        return '<input type="hidden" name="_glpi_csrf_token" value="'
+            . \htmlescape(\Session::getNewCSRFToken())
+            . '">';
+    }
 }

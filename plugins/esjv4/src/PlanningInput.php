@@ -84,13 +84,47 @@ final class PlanningInput
                 'slot' => $slot,
                 'name' => $name,
                 'building_key' => self::text($phase_slot['building_key'] ?? ''),
+                'groups_id' => max(0, (int) ($phase_slot['groups_id'] ?? 0)),
                 'activity_package_key' => self::packageKey($phase_slot['activity_package_key'] ?? 'none'),
                 'planned_start' => self::text($phase_slot['planned_start'] ?? ''),
                 'planned_end' => self::text($phase_slot['planned_end'] ?? ''),
+                'stage_tasks' => self::stageTasks($phase_slot['stage_tasks'] ?? []),
             ];
         }
 
         usort($normalized, static fn(array $a, array $b): int => $a['slot'] <=> $b['slot']);
+
+        return $normalized;
+    }
+
+    private static function stageTasks(array $stage_tasks): array
+    {
+        $normalized = [];
+        $valid_stages = array_keys(Catalog::stages());
+
+        foreach ($stage_tasks as $stage_task) {
+            $stage_key = self::text($stage_task['stage_key'] ?? '');
+            if (!in_array($stage_key, $valid_stages, true)) {
+                continue;
+            }
+
+            $tasks = [];
+            foreach (preg_split('/\R/', (string) ($stage_task['tasks'] ?? '')) ?: [] as $line) {
+                $task = self::text($line);
+                if ($task !== '') {
+                    $tasks[] = $task;
+                }
+            }
+
+            if ($tasks === []) {
+                continue;
+            }
+
+            $normalized[] = [
+                'stage_key' => $stage_key,
+                'tasks' => $tasks,
+            ];
+        }
 
         return $normalized;
     }

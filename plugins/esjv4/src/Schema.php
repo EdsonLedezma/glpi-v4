@@ -42,15 +42,26 @@ final class Schema
     {
         global $DB;
 
-        if (
-            isset($DB)
-            && method_exists($DB, 'fieldExists')
-            && $DB->tableExists(self::TABLE_PHASES)
-            && !$DB->fieldExists(self::TABLE_PHASES, 'esj_buildings_id')
-        ) {
-            return (bool) $DB->doQuery(
-                "ALTER TABLE `" . self::TABLE_PHASES . "` ADD `esj_buildings_id` int unsigned NOT NULL DEFAULT 0 AFTER `projecttasks_id`, ADD KEY `building` (`esj_buildings_id`)"
-            );
+        if (!isset($DB) || !method_exists($DB, 'fieldExists')) {
+            return true;
+        }
+
+        if ($DB->tableExists(self::TABLE_PHASES)) {
+            if (!$DB->fieldExists(self::TABLE_PHASES, 'esj_buildings_id')) {
+                if (!$DB->doQuery(
+                    "ALTER TABLE `" . self::TABLE_PHASES . "` ADD `esj_buildings_id` int unsigned NOT NULL DEFAULT 0 AFTER `projecttasks_id`, ADD KEY `building` (`esj_buildings_id`)"
+                )) {
+                    return false;
+                }
+            }
+
+            if (!$DB->fieldExists(self::TABLE_PHASES, 'groups_id')) {
+                if (!$DB->doQuery(
+                    "ALTER TABLE `" . self::TABLE_PHASES . "` ADD `groups_id` int unsigned NOT NULL DEFAULT 0 AFTER `esj_buildings_id`, ADD KEY `groups_id_idx` (`groups_id`)"
+                )) {
+                    return false;
+                }
+            }
         }
 
         return true;
@@ -93,6 +104,7 @@ final class Schema
                 `esj_projects_id` int unsigned NOT NULL DEFAULT 0,
                 `projecttasks_id` int unsigned NOT NULL DEFAULT 0,
                 `esj_buildings_id` int unsigned NOT NULL DEFAULT 0,
+                `groups_id` int unsigned NOT NULL DEFAULT 0,
                 `slot` int unsigned NOT NULL DEFAULT 0,
                 `name` varchar(255) NOT NULL DEFAULT '',
                 `status` varchar(80) NOT NULL DEFAULT 'planned',
@@ -104,6 +116,7 @@ final class Schema
                 PRIMARY KEY (`id`),
                 KEY `project_slot` (`esj_projects_id`, `slot`),
                 KEY `building` (`esj_buildings_id`),
+                KEY `groups_id_idx` (`groups_id`),
                 KEY `status` (`status`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
             self::TABLE_BUILDINGS => "CREATE TABLE `" . self::TABLE_BUILDINGS . "` (

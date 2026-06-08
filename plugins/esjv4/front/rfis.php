@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use GlpiPlugin\Esjv4\Catalog;
 use GlpiPlugin\Esjv4\PlanningRepository;
+use GlpiPlugin\Esjv4\Plugin;
 use GlpiPlugin\Esjv4\RfiLinkService;
 
 require_once dirname(__DIR__, 3) . '/inc/includes.php';
@@ -53,6 +54,7 @@ echo '<div class="card mb-3">';
 echo '<div class="card-header">Vincular ticket existente</div>';
 echo '<div class="card-body">';
 echo '<form method="post" action="/plugins/esjv4/front/rfis.php">';
+echo Plugin::csrfField();
 echo '<input type="hidden" name="project_id" value="' . $project_id . '">';
 echo '<div class="row g-3">';
 esjv4_rfi_input('tickets_id', 'ID ticket GLPI', $errors);

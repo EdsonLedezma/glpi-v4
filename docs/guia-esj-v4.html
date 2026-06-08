@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guia de Uso ESJ V4 - GLPI</title>
+  <style>
+    :root {
+      --ink: #162033;
+      --muted: #5d6b82;
+      --line: #d9e1ec;
+      --soft: #f5f7fb;
+      --brand: #1f5f99;
+      --accent: #f2b84b;
+      --ok: #23764f;
+      --warn: #9a5b00;
+      --bad: #a53434;
+      --card: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--soft);
+      color: var(--ink);
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.55;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 36px 22px 56px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #143b60, #1f5f99);
+      color: #fff;
+      border-radius: 10px;
+      padding: 34px;
+      margin-bottom: 22px;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 5vw, 44px);
+      line-height: 1.08;
+    }
+
+    header p {
+      margin: 0;
+      max-width: 780px;
+      color: #e7eef7;
+      font-size: 17px;
+    }
+
+    nav {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin-bottom: 18px;
+    }
+
+    nav strong { display: block; margin-bottom: 8px; }
+    nav a {
+      display: inline-block;
+      margin: 4px 14px 4px 0;
+      color: var(--brand);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 24px;
+      margin: 18px 0;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 24px;
+      color: #183755;
+    }
+
+    h3 {
+      margin: 22px 0 8px;
+      font-size: 18px;
+      color: #263c57;
+    }
+
+    p { margin: 8px 0 12px; }
+    ul, ol { padding-left: 23px; }
+    li { margin: 7px 0; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .tile {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 15px;
+      background: #fbfcff;
+    }
+
+    .tile strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #20344d;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .step {
+      position: relative;
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--brand);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fbfcff;
+      min-height: 116px;
+    }
+
+    .step .num {
+      display: inline-flex;
+      width: 28px;
+      height: 28px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--brand);
+      color: #fff;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .note {
+      border-left: 5px solid var(--accent);
+      background: #fff7e4;
+      padding: 13px 15px;
+      border-radius: 6px;
+      color: #4c3813;
+    }
+
+    .ok { color: var(--ok); font-weight: 700; }
+    .warn { color: var(--warn); font-weight: 700; }
+    .bad { color: var(--bad); font-weight: 700; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 4px;
+      background: #fff;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #eef3f9;
+      color: #223b55;
+    }
+
+    code {
+      background: #eef3f9;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.94em;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      background: #111827;
+      color: #e5e7eb;
+      padding: 16px;
+      border-radius: 8px;
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.42;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    footer {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 10px 2px;
+    }
+
+    @media print {
+      body { background: #fff; }
+      .page { max-width: none; padding: 0; }
+      header, section, nav { break-inside: avoid; }
+      nav a { color: #000; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <h1>Guia de Uso ESJ V4 en GLPI</h1>
+      <p>Sistema de administracion de proyectos de construccion para ESJ, enfocado en planeacion, naves, fases, actividades, RFIs y medicion de tiempos de ingenieria.</p>
+    </header>
+
+    <nav>
+      <strong>Contenido</strong>
+      <a href="#objetivo">Objetivo</a>
+      <a href="#roles">Roles</a>
+      <a href="#flujo">Flujo de negocio</a>
+      <a href="#uso">Uso paso a paso</a>
+      <a href="#reglas">Reglas clave</a>
+      <a href="#sap">Correo SAP</a>
+      <a href="#reportes">Tiempos</a>
+    </nav>
+
+    <section id="objetivo">
+      <h2>1. Objetivo del sistema</h2>
+      <p>ESJ V4 convierte un correo de SAP en un proyecto operativo dentro de GLPI. Desde ese punto, el equipo puede planear naves, fases, fechas y paquetes de actividades; despues ejecutar el trabajo mediante tableros Kanban, tickets tipo RFI y reportes de tiempo.</p>
+      <div class="note">
+        En la version actual de prueba, el correo SAP se registra pegando el contenido en la Bandeja SAP. La logica de negocio es la misma que usara la integracion automatica por correo cuando se conecte el collector/IMAP.
+      </div>
+    </section>
+
+    <section id="roles">
+      <h2>2. Roles y responsabilidades</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Rol / grupo</th>
+            <th>Responsabilidad principal</th>
+            <th>Que revisa en el sistema</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Project Manager</td>
+            <td>Seguimiento ejecutivo del proyecto.</td>
+            <td>Resumen del proyecto, avance de fases, avance de actividades, bloqueos y estado general.</td>
+          </tr>
+          <tr>
+            <td>Lider de Ingenieria</td>
+            <td>Asignar trabajo, revisar carga del equipo y liberar etapas.</td>
+            <td>Kanban, responsables, actividades abiertas, RFIs bloqueantes y gate de construccion.</td>
+          </tr>
+          <tr>
+            <td>Planeacion</td>
+            <td>Convertir el correo SAP en estructura operativa.</td>
+            <td>Bandeja SAP, naves/edificios, fases, fechas y paquetes de actividades.</td>
+          </tr>
+          <tr>
+            <td>Diseno estructural</td>
+            <td>Ejecutar y cerrar la etapa de diseno estructural.</td>
+            <td>Actividades asignadas, estados del Kanban y RFIs relacionados.</td>
+          </tr>
+          <tr>
+            <td>Modelado de conexiones</td>
+            <td>Ejecutar el modelo de conexiones y entregar planos finales completos.</td>
+            <td>Actividades de modelado, pausas por RFI y cierre de la etapa core.</td>
+          </tr>
+          <tr>
+            <td>Planos de fabricacion / montaje</td>
+            <td>Trabajar fases de construccion una vez liberado el gate.</td>
+            <td>Fases activas, actividades por producto y tiempos de ejecucion.</td>
+          </tr>
+          <tr>
+            <td>Submittals / Requisiciones</td>
+            <td>Gestionar entregables y solicitudes que requieren trazabilidad formal.</td>
+            <td>Tickets vinculados al proyecto, fase, nave, actividad o producto.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="small">El administrador de GLPI conserva acceso completo al sistema. Los usuarios operativos deben trabajar con el perfil <code>ESJ Ingenieria</code>.</p>
+    </section>
+
+    <section id="flujo">
+      <h2>3. Flujo de negocio</h2>
+      <div class="flow">
+        <div class="step">
+          <span class="num">1</span>
+          <strong>Correo SAP</strong>
+          <p>Se recibe una notificacion de proyecto desde SAP con cliente, cotizacion, ubicacion y datos del suministro.</p>
+        </div>
+        <div class="step">
+          <span class="num">2</span>
+          <strong>Bandeja SAP</strong>
+          <p>El sistema registra el proyecto como <code>pending_planning</code>. Aun no hay fases listas para ejecutar.</p>
+        </div>
+        <div class="step">
+          <span class="num">3</span>
+          <strong>Planeacion</strong>
+          <p>Planeacion define naves/edificios, fases, fechas limite y paquetes de actividades precargadas.</p>
+        </div>
+        <div class="step">
+          <span class="num">4</span>
+          <strong>Etapas core</strong>
+          <p>Se trabajan Planeacion, Diseno estructural y Modelo de conexiones. Las fases de construccion permanecen bloqueadas.</p>
+        </div>
+        <div class="step">
+          <span class="num">5</span>
+          <strong>Gate</strong>
+          <p>Cuando las tres etapas core se cierran y no existen RFIs bloqueantes, el lider libera construccion.</p>
+        </div>
+        <div class="step">
+          <span class="num">6</span>
+          <strong>Ejecucion paralela</strong>
+          <p>Las fases de construccion se activan y pueden avanzar en paralelo por nave, fase, actividad y producto.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="uso">
+      <h2>4. Uso paso a paso</h2>
+
+      <h3>4.1 Entrar al sistema</h3>
+      <ol>
+        <li>Abrir GLPI en el navegador. En el ambiente local de prueba se usa <code>http://localhost:8084</code>.</li>
+        <li>Iniciar sesion con un usuario asignado al perfil <code>ESJ Ingenieria</code>.</li>
+        <li>Usar los accesos del sidebar: ESJ Inicio, ESJ Proyectos, Planeacion SAP, Kanban Ingenieria, RFIs y Bloqueos, Tiempos y SLA, Plantillas ESJ.</li>
+      </ol>
+
+      <h3>4.2 Registrar un proyecto desde SAP</h3>
+      <ol>
+        <li>Entrar a <strong>Planeacion SAP</strong>.</li>
+        <li>En <strong>Registrar correo SAP</strong>, pegar el contenido completo del correo. La pantalla de prueba ya trae un ejemplo precargado.</li>
+        <li>Presionar <strong>Enviar a Planeacion</strong>.</li>
+        <li>El sistema crea el proyecto y abre la pantalla para completar planeacion.</li>
+      </ol>
+
+      <h3>4.3 Completar planeacion</h3>
+      <ol>
+        <li>Revisar los datos SAP: codigo, cliente, cotizacion y ubicacion.</li>
+        <li>Definir las <strong>naves/edificios</strong>. Ejemplo: Nave A / Edificio A1.</li>
+        <li>Activar solo las fases que aplican al proyecto.</li>
+        <li>Asignar cada fase a una nave.</li>
+        <li>Capturar fecha de inicio y termino limite por fase.</li>
+        <li>Elegir el paquete de actividades: Sin plantilla, Ingenieria core, Productos de modelado, o Ingenieria core + modelado.</li>
+        <li>Presionar <strong>Completar planeacion</strong>.</li>
+      </ol>
+
+      <h3>4.4 Revisar el proyecto</h3>
+      <ol>
+        <li>Entrar a <strong>ESJ Proyectos</strong> y abrir el proyecto.</li>
+        <li>Revisar metricas de avance de fases, avance de actividades y estado del gate de construccion.</li>
+        <li>Desde el proyecto se puede ir a Kanban, RFIs y Tiempos.</li>
+      </ol>
+
+      <h3>4.5 Trabajar en Kanban</h3>
+      <ol>
+        <li>Entrar a <strong>Kanban Ingenieria</strong> desde el proyecto.</li>
+        <li>Las actividades aparecen agrupadas por estado.</li>
+        <li>Usar <strong>Iniciar</strong> cuando comienza el trabajo operativo.</li>
+        <li>Usar <strong>Pausa RFI</strong> cuando el trabajo queda detenido por una duda o bloqueo formal.</li>
+        <li>Usar <strong>Reanudar</strong> cuando se resuelve la pausa.</li>
+        <li>Usar <strong>Cerrar</strong> cuando la actividad esta terminada.</li>
+      </ol>
+
+      <h3>4.6 Registrar RFIs, restricciones, submittals o requisiciones</h3>
+      <ol>
+        <li>Crear o identificar el ticket GLPI correspondiente.</li>
+        <li>Entrar a <strong>RFIs y Bloqueos</strong> desde el proyecto.</li>
+        <li>Vincular el ID del ticket.</li>
+        <li>Seleccionar alcance: proyecto, fase, nave, actividad, tarea o producto.</li>
+        <li>Seleccionar impacto: <code>blocking</code> si impide cerrar o avanzar; <code>informational</code> si solo documenta informacion.</li>
+      </ol>
+    </section>
+
+    <section id="reglas">
+      <h2>5. Reglas clave de negocio</h2>
+      <div class="grid">
+        <div class="tile">
+          <strong>Trabajo tecnico comun</strong>
+          Las actividades normales de ingenieria se gestionan como actividades/tareas del proyecto.
+        </div>
+        <div class="tile">
+          <strong>RFI y bloqueos</strong>
+          RFIs, restricciones, submittals y requisiciones se manejan como tickets para conservar trazabilidad formal.
+        </div>
+        <div class="tile">
+          <strong>Fases bloqueadas al inicio</strong>
+          Las fases de construccion no deben activarse hasta cerrar Planeacion, Diseno estructural y Modelo de conexiones.
+        </div>
+        <div class="tile">
+          <strong>Gate de construccion</strong>
+          El gate solo libera fases si las tres etapas core estan cerradas y no hay RFIs bloqueantes abiertos.
+        </div>
+        <div class="tile">
+          <strong>Timers 24/7</strong>
+          Los tiempos se miden en calendario continuo, incluyendo noches, fines de semana y festivos.
+        </div>
+        <div class="tile">
+          <strong>Cierre bloqueado</strong>
+          Una actividad o etapa no debe cerrarse si tiene RFIs bloqueantes pendientes.
+        </div>
+      </div>
+    </section>
+
+    <section id="sap">
+      <h2>6. Ejemplo de correo SAP</h2>
+      <p>Este es el ejemplo precargado para pruebas. Al enviarlo, el sistema detecta el codigo <code>EAA2506</code>, el proyecto <code>MBA SAN RAFAEL</code>, la cotizacion <code>0020033984</code> y el cliente <code>5000004221 PUNTO ESTRUCTURAL</code>.</p>
+      <pre>OBSERVACIONES:
+EAA2506 MBA SAN RAFAEL
+
+FECHA DE SUMINISTRO:
+PENDIENTE POR CONFIRMAR.
+
+CONTACTO:
++52 1 33 2254 6822
+'Ing Antonio Zuloaga' &lt;antonio.zuloaga1@gmail.com&gt;
+
+NOTIFICACION DE PROYECTO:
+
+Por: JESUS RENE CARRILLO BARRAZA
+
+Nombre: MBA SAN RAFAEL
+Area de Ventas: 400A/IT/ID - Construccion, INDUSTRIA TRANSFORMA, INDUSTRIAS DIVERSAS
+No.: MBA SAN RAFAEL
+Cotizacion: 0020033984
+Destinatario de Mercancias: 0030013268 MBA SAN RAFAEL
+Cliente: 5000004221 PUNTO ESTRUCTURAL
+Direccion: AV. HISTORIADORES S/N, CALLE MANUEL MARIA PONCE
+Ubicacion: GUADALAJARA, Jalisco, Mexico
+Contacto de la Cotizacion:
+
+8 JOISTS con 1124 kg
+1 Flete Extra Extra Largo P.UNIT $24,200.00 Pesos - Centro: 4012</pre>
+    </section>
+
+    <section id="reportes">
+      <h2>7. Reportes de tiempo y toma de decisiones</h2>
+      <p>El objetivo operativo del sistema es medir cuanto dura cada proceso para mejorar decisiones internas y futuras cotizaciones. Los eventos del sistema registran cambios de estado, inicios, pausas, reanudaciones y cierres.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Metrica</th>
+            <th>Como se genera</th>
+            <th>Para que sirve</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tiempo de planeacion</td>
+            <td>Desde la recepcion del proyecto SAP hasta completar planeacion.</td>
+            <td>Medir velocidad de arranque y detectar cuellos de botella iniciales.</td>
+          </tr>
+          <tr>
+            <td>Tiempo operativo de actividad</td>
+            <td>Desde iniciar/reanudar hasta pausar/cerrar.</td>
+            <td>Estimar capacidad real y tiempos por tipo de actividad o producto.</td>
+          </tr>
+          <tr>
+            <td>Tiempo pausado por RFI</td>
+            <td>Desde Pausa RFI hasta Reanudar.</td>
+            <td>Separar tiempo productivo de tiempo detenido por informacion faltante.</td>
+          </tr>
+          <tr>
+            <td>Duracion de fase</td>
+            <td>Desde activacion hasta cierre de fase.</td>
+            <td>Comparar desempeno entre fases, naves y proyectos.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        Regla importante: no se depende de botones manuales de "timer". Los tiempos se calculan por eventos de negocio: crear, asignar, iniciar, pausar, reanudar, cerrar y liberar.
+      </div>
+    </section>
+
+    <section>
+      <h2>8. Criterios para validar un proyecto</h2>
+      <ul>
+        <li>El correo SAP crea un proyecto pendiente de planeacion.</li>
+        <li>Planeacion define al menos una nave y una fase activa.</li>
+        <li>Las fases de construccion quedan bloqueadas hasta cerrar las tres etapas core.</li>
+        <li>El Kanban muestra actividades por estado.</li>
+        <li>Un RFI bloqueante impide cerrar cuando aplica.</li>
+        <li>Los reportes de tiempos reflejan trabajo operativo y pausas RFI por separado.</li>
+        <li>El PM puede revisar resumen sin entrar al detalle tecnico de cada ticket.</li>
+      </ul>
+    </section>
+
+    <footer>
+      Guia preparada para ESJ V4 sobre GLPI. Archivo HTML standalone: puede enviarse por correo o abrirse directamente en navegador.
+    </footer>
+  </main>
+</body>
+</html>

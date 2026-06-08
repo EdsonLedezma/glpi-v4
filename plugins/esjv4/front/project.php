@@ -50,6 +50,8 @@ foreach ($overview['buildings'] as $building) {
     $building_names[(int) $building['id']] = $label !== '' ? $name . ' / ' . $label : $name;
 }
 
+$group_names = esjv4_group_names(array_column($overview['phases'], 'groups_id'));
+
 Html::header('Proyecto ESJ V4', $_SERVER['PHP_SELF'], 'tools', 'esjv4');
 
 echo '<div class="container-fluid">';
@@ -81,6 +83,7 @@ echo '<div class="card mb-3">';
 echo '<div class="card-header d-flex justify-content-between align-items-center">';
 echo '<span>Etapas core</span>';
 echo '<form method="post" action="/plugins/esjv4/front/project.php" class="m-0">';
+echo Plugin::csrfField();
 echo '<input type="hidden" name="project_id" value="' . $project_id . '">';
 echo '<input type="hidden" name="action" value="release_gate">';
 echo '<button class="btn btn-sm btn-primary" type="submit">Liberar fases de construccion</button>';
@@ -102,6 +105,7 @@ foreach ($overview['stages'] as $stage) {
     echo '<td class="text-end">';
     if (in_array($stage_key, Catalog::constructionReleaseRequiredStages(), true) && $status !== Catalog::STATUS_CLOSED) {
         echo '<form method="post" action="/plugins/esjv4/front/project.php" class="d-inline">';
+        echo Plugin::csrfField();
         echo '<input type="hidden" name="project_id" value="' . $project_id . '">';
         echo '<input type="hidden" name="action" value="close_stage">';
         echo '<input type="hidden" name="stage_key" value="' . htmlescape($stage_key) . '">';
@@ -120,7 +124,7 @@ echo '<div class="card-header">Fases</div>';
 echo '<div class="card-body p-0">';
 echo '<div class="table-responsive">';
 echo '<table class="table table-sm align-middle mb-0">';
-echo '<thead><tr><th>Fase</th><th>Nombre</th><th>Nave</th><th>Estado</th><th>Inicio planeado</th><th>Termino limite</th></tr></thead><tbody>';
+echo '<thead><tr><th>Fase</th><th>Nombre</th><th>Nave</th><th>Grupo</th><th>Estado</th><th>Inicio planeado</th><th>Termino limite</th></tr></thead><tbody>';
 
 foreach ($overview['phases'] as $phase) {
     $building_id = (int) ($phase['esj_buildings_id'] ?? 0);
@@ -128,6 +132,7 @@ foreach ($overview['phases'] as $phase) {
     echo '<td>Fase ' . sprintf('%02d', (int) $phase['slot']) . '</td>';
     echo '<td>' . htmlescape((string) $phase['name']) . '</td>';
     echo '<td>' . htmlescape($building_names[$building_id] ?? '-') . '</td>';
+    echo '<td>' . htmlescape($group_names[(int) ($phase['groups_id'] ?? 0)] ?? '-') . '</td>';
     echo '<td>' . status_badge((string) $phase['status']) . '</td>';
     echo '<td>' . htmlescape(short_date((string) ($phase['planned_start'] ?? ''))) . '</td>';
     echo '<td>' . htmlescape(short_date((string) ($phase['planned_end'] ?? ''))) . '</td>';
@@ -226,4 +231,27 @@ function gate_hint(array $gate): string
     }
 
     return $parts === [] ? 'Condiciones pendientes.' : implode(' / ', $parts);
+}
+
+function esjv4_group_names(array $group_ids): array
+{
+    global $DB;
+
+    $group_ids = array_values(array_unique(array_filter(array_map('intval', $group_ids))));
+    if ($group_ids === [] || !isset($DB) || !is_object($DB)) {
+        return [];
+    }
+
+    $names = [];
+    $iterator = $DB->request([
+        'SELECT' => ['id', 'name', 'completename'],
+        'FROM' => 'glpi_groups',
+        'WHERE' => ['id' => $group_ids],
+    ]);
+
+    foreach ($iterator as $row) {
+        $names[(int) $row['id']] = (string) ($row['completename'] ?: $row['name']);
+    }
+
+    return $names;
 }
